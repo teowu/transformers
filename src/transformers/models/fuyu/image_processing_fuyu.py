@@ -634,11 +634,11 @@ class FuyuImageProcessor(BaseImageProcessor):
                         # math.ceil(torch.tensor(300).cuda() / 30) == 11
                         new_h = min(
                             image_height,
-                            math.ceil(image_unpadded_h[batch_index, subseq_index] / patch_height) * patch_height,
+                            math.ceil(image_unpadded_h[batch_index, 0] / patch_height) * patch_height,
                         )
                         new_w = min(
                             image_width,
-                            math.ceil(image_unpadded_w[batch_index, subseq_index] / patch_width) * patch_width,
+                            math.ceil(image_unpadded_w[batch_index, 0] / patch_width) * patch_width,
                         )
                         image = image[:, :new_h, :new_w]
                         image_height, image_width = new_h, new_w
@@ -665,9 +665,11 @@ class FuyuImageProcessor(BaseImageProcessor):
                     images.append([image])
                     image_input_ids.append(tensor_of_image_ids)
                     image_patches.append(patches)
+                    
                 else:
                     image_input_ids.append(torch.tensor([], dtype=torch.int32, device=image_input.device))
-
+            image_input_ids = [torch.cat(image_input_ids, 0)]
+            image_patches = [torch.cat(image_patches, 0)]
             batch_image_input_ids.append(image_input_ids)
             batch_image_patches.append(image_patches)
 

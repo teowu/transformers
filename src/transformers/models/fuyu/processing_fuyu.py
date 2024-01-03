@@ -392,7 +392,7 @@ class FuyuProcessor(ProcessorMixin):
         image_newline_id,
         tensor_batch_images,
     ):
-        image_present = torch.ones(1, 1, 1)
+        image_present = torch.ones(1, tensor_batch_images.shape[1], 1)
         model_image_input = self.image_processor.preprocess_with_tokenizer_info(
             image_input=tensor_batch_images,
             image_present=image_present,
@@ -548,7 +548,7 @@ class FuyuProcessor(ProcessorMixin):
 
         image_placeholder_id = self.tokenizer("|SPEAKER|", add_special_tokens=False)["input_ids"][1]
         image_newline_id = self.tokenizer("|NEWLINE|", add_special_tokens=False)["input_ids"][1]
-        tensor_batch_images = torch.stack([img[0] for img in batch_images]).unsqueeze(1)
+        tensor_batch_images = torch.stack([img[0] for img in batch_images]).unsqueeze(0)
 
         # --- Use self.image_processor again to obtain the full token ids and batch inputs ---
         all_encodings = []
